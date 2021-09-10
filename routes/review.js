@@ -16,5 +16,5 @@ const validateReview = (req, res, next) => {
 	}
 }
 router.post("/",validateReview, catchAsync(reviewController.createReview))
-router.delete("/reviewId", catchAsync(reviewController.deleteReview))
+router.delete("/:reviewId", catchAsync(reviewController.deleteReview))
 module.exports = router

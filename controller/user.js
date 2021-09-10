@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const passport = require('passport')
 const localStratagy = require('passport-local')
+
 module.exports.renderRegisterForm = (req, res) => {
 	res.render('users/register')
 }
@@ -27,7 +28,7 @@ module.exports.registerUser = async (req, res, next) => {
 module.exports.renderLoginForm = (req, res) => {
 	res.render('users/login')
 }
-module.exports.loginUser = passport.authenticate('local', { failureFlash: true, failureRedirect: 'login' }), (req, res) => {
+module.exports.loginUser = (req, res) => {
 	req.flash('success', 'Welcome back')
 	const redirectUrl = req.session.returnTo || '/campgrounds'
 	delete req.session.returnTo

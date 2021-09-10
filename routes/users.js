@@ -6,46 +6,14 @@ const passport = require('passport')
 const localStratagy = require('passport-local')
 const userController = require('../controller/user')
 
-router.get('/register', (req, res) => {
-	res.render('users/register')
-})
+router.route('/register')
+	.get(userController.renderRegisterForm)
+	.post(catchAsync(userController.registerUser))
 
-router.post('/register', catchAsync(async (req, res, next) => {
-	try {
-		const { email, username, password } = req.body
-		const user = new User({ email, username })
-		const registerdUser = await User.register(user, password)
-		req.login(registerdUser, err => {
-			if (err) {
-				return next(err)
-			} else {
-				req.flash('success', 'Registered and Logged in successfully')
-				res.redirect('/campgrounds')
-			}
-		})
+router.route('/login')
+	.get(userController.renderLoginForm)
+	.post(passport.authenticate('local', { failureFlash: true, failureRedirect: 'login' }), userController.loginUser)
 
-	} catch (e) {
-		req.flash('error', e.message)
-		res.redirect('/register')
-	}
-
-}))
-
-router.get('/login', (req, res) => {
-	res.render('users/login')
-})
-
-router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: 'login' }), (req, res) => {
-	req.flash('success', 'Welcome back')
-	const redirectUrl = req.session.returnTo || '/campgrounds'
-	delete req.session.returnTo
-	res.redirect(redirectUrl)
-})
-
-router.get('/logout', (req, res) => {
-	req.logOut()
-	req.flash('success', 'Logged You Out')
-	res.redirect('/campgrounds')
-})
+router.get('/logout', userController.logoutUser)
 
 module.exports = router
